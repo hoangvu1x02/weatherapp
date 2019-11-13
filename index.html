@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Weather Dashboard</title>
+
+
+    <style>
+        .uvindex {
+            padding: 5px;
+            color: ghostwhite;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Weather Dashboard</h1>
+            <p class="lead">A simple app which allows you to check Weather in major cities</p>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="cityname" placeholder="Recipient's username"
+                        aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="searchbtn">Button</button>
+                    </div>
+                </div>
+                <table class="table table-striped">
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="container-fluid">
+                            <h1 class="citynamedisplay"><span class="date"></span></h1>
+                            <p><strong>Temperatrue:</strong> <span class="temp"></span> </p>
+                            <p><strong>Humidity:</strong> <span class="humidity"></span></p>
+                            <p><strong>Wind Speed:</strong> <span class="wind"></span></p>
+                            <p><strong>UV index:</strong> <span class="uvindex"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <h1> 5-Day Forecast: </h1>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script>
+
+        var cityname = "";
+
+
+        $("#searchbtn").on("click", function () {
+            cityname = $("#cityname").val().toLowerCase();
+            console.log(cityname);
+            createRow();
+
+            var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityname + "&units=imperial&APPID=4d303226f178538f6031e90433ea1623";
+
+            var longtitude;
+            var latitude;
+            var citynamedisplay;
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) {
+                console.log(response);
+                citynamedisplay = response.name;
+                $(".temp").text(response.main.temp + " °F");
+                $(".humidity").text(response.main.humidity + " %");
+                $(".wind").text(response.wind.speed + " MPH");
+                longtitude = response.coord.lon;
+                latitude = response.coord.lat;
+                console.log(longtitude);
+                console.log(latitude);
+
+                var secondqueryURL = "http://api.openweathermap.org/data/2.5/uvi?appid=4d303226f178538f6031e90433ea1623&lat=" + latitude + "&lon=" + longtitude;
+                $.ajax({
+                    url: secondqueryURL,
+                    method: "GET"
+                }).then(function (response) {
+                    console.log(response);
+                    $(".uvindex").text(response.value);
+                    $(".uvindex").css("background-color", "crimson");
+                    $(".citynamedisplay").text(citynamedisplay + " " + "(" + response.date_iso + ")");
+                    console.log(response.date_iso);
+                });
+            });
+
+
+
+        });
+
+        var createRow = function () {
+            // Create a new table row element
+            var tRow = $("<tr>");
+
+            var cityTd = $("<td>").text(cityname);
+
+            // Append the newly created table data to the table row
+            tRow.append(cityTd);
+            // Append the table row to the table body
+            $("tbody").prepend(tRow);
+        };
+
+
+
+    </script>
+</body>
+
+</html>
