@@ -16,36 +16,74 @@
             color: ghostwhite;
             border-radius: 5px;
         }
+
+        .forecast{
+            background-color: royalblue;
+            margin-left: 20px;
+            border-radius: 5px;
+            color: whitesmoke;
+        }
+
+        .fiveday{
+            background-color: lightgoldenrodyellow;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .current{
+            border: 1px dotted black;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: lightgoldenrodyellow;
+        }
+
+        body{
+            background-color: khaki;
+        }
+
+        .tablebackground{
+            background-color: lightyellow;
+        }
+
+        .heading{
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        .topheader {
+            background-color: lightgoldenrodyellow;
+        }
     </style>
 </head>
 
 <body>
-    <div class="jumbotron jumbotron-fluid">
+    <div class="jumbotron jumbotron-fluid topheader">
         <div class="container">
-            <h1 class="display-4">Weather Dashboard</h1>
+            <h1 class="display-4 heading">Weather Dashboard</h1>
             <p class="lead">A simple app which allows you to check Weather in major cities</p>
         </div>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid mainbackground">
         <div class="row">
             <div class="col-4">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="cityname" placeholder="Recipient's username"
+                    <input type="text" class="form-control" id="cityname" placeholder="Enter a city name"
                         aria-label="Recipient's username" aria-describedby="button-addon2">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="searchbtn">Button</button>
+                        <button class="btn " type="button" id="searchbtn">Search</button>
                     </div>
                 </div>
-                <table class="table table-striped">
+                <table class="table table-striped tablebackground">
                     <tbody>
                     </tbody>
                 </table>
             </div>
-            <div class="col-8">
+            <div class="col-8 rightbackground">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 current">
                         <div class="container-fluid">
-                            <h1 class="citynamedisplay"><span class="date"></span></h1>
+                            <div class="row">
+                                <h1 class="citynamedisplay"> </h1> <img id="wicon" src="" alt="Weather icon">
+                            </div>
                             <p><strong>Temperatrue:</strong> <span class="temp"></span> </p>
                             <p><strong>Humidity:</strong> <span class="humidity"></span></p>
                             <p><strong>Wind Speed:</strong> <span class="wind"></span></p>
@@ -53,13 +91,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row fiveday">
                     <h1> 5-Day Forecast: </h1>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
+                    <div class="row display">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,10 +110,12 @@
     <script>
 
         var cityname = "";
-
+        $("#wicon").css("display", "none");
 
         $("#searchbtn").on("click", function () {
             cityname = $("#cityname").val().toLowerCase();
+            $(".display").empty();
+            
             console.log(cityname);
             createRow();
 
@@ -86,6 +124,7 @@
             var longtitude;
             var latitude;
             var citynamedisplay;
+            var iconcode;
 
             $.ajax({
                 url: queryURL,
@@ -93,6 +132,7 @@
             }).then(function (response) {
                 console.log(response);
                 citynamedisplay = response.name;
+                iconcode = response.weather[0].icon;
                 $(".temp").text(response.main.temp + " °F");
                 $(".humidity").text(response.main.humidity + " %");
                 $(".wind").text(response.wind.speed + " MPH");
@@ -101,17 +141,46 @@
                 console.log(longtitude);
                 console.log(latitude);
 
+                var iconlink = "http://openweathermap.org/img/w/" + iconcode + ".png";
                 var secondqueryURL = "http://api.openweathermap.org/data/2.5/uvi?appid=4d303226f178538f6031e90433ea1623&lat=" + latitude + "&lon=" + longtitude;
                 $.ajax({
                     url: secondqueryURL,
                     method: "GET"
                 }).then(function (response) {
                     console.log(response);
+                    
                     $(".uvindex").text(response.value);
                     $(".uvindex").css("background-color", "crimson");
                     $(".citynamedisplay").text(citynamedisplay + " " + "(" + response.date_iso + ")");
+                    $('#wicon').attr('src', iconlink);
+                    $("#wicon").css("display", "block");
                     console.log(response.date_iso);
                 });
+
+                var secondicon;
+                var thirdqueryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityname + "&units=imperial&appid=4d303226f178538f6031e90433ea1623";
+                $.ajax({
+                    url: thirdqueryURL,
+                    method: "GET"
+                }).then(function (response) {
+                    console.log(response);
+                    var fivedaysweather = response.list;
+                    for (var i = 0; i < fivedaysweather.length; i = i + 8) {
+                        var newDiv = $("<div>");
+                        newDiv.addClass("col forecast");
+                        secondicon = fivedaysweather[i].weather[0].icon;
+                        var secondiconlink = "http://openweathermap.org/img/w/" + secondicon + ".png";
+                        var date = $("<h3>").text(fivedaysweather[i].dt_txt);
+                        var icon = $("<img>").attr('src', secondiconlink);
+                        var temp = $("<p>").text("Temperature: " + fivedaysweather[i].main.temp + " °F");
+                        var humidity = $("<p>").text("Humidity: " + fivedaysweather[i].main.humidity + " %");
+                        console.log(fivedaysweather[i]);
+                        newDiv.append(date, icon, temp, humidity);
+
+                        $(".display").append(newDiv);
+                    };
+                });
+
             });
 
 
