@@ -17,35 +17,35 @@
             border-radius: 5px;
         }
 
-        .forecast{
+        .forecast {
             background-color: royalblue;
             margin-left: 20px;
             border-radius: 5px;
             color: whitesmoke;
         }
 
-        .fiveday{
+        .fiveday {
             background-color: lightgoldenrodyellow;
             border-radius: 5px;
             padding: 20px;
         }
 
-        .current{
+        .current {
             border: 1px dotted black;
             padding: 20px;
             border-radius: 5px;
             background-color: lightgoldenrodyellow;
         }
 
-        body{
+        body {
             background-color: khaki;
         }
 
-        .tablebackground{
+        .tablebackground {
             background-color: lightyellow;
         }
 
-        .heading{
+        .heading {
             font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         }
 
@@ -106,7 +106,15 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script> -->
     <script>
 
         var cityname = "";
@@ -115,7 +123,7 @@
         $("#searchbtn").on("click", function () {
             cityname = $("#cityname").val().toLowerCase();
             $(".display").empty();
-            
+
             console.log(cityname);
             createRow();
 
@@ -141,14 +149,14 @@
                 console.log(longtitude);
                 console.log(latitude);
 
-                var iconlink = "http://openweathermap.org/img/w/" + iconcode + ".png";
-                var secondqueryURL = "http://api.openweathermap.org/data/2.5/uvi?appid=4d303226f178538f6031e90433ea1623&lat=" + latitude + "&lon=" + longtitude;
+                var iconlink = "https://openweathermap.org/img/w/" + iconcode + ".png";
+                var secondqueryURL = "https://api.openweathermap.org/data/2.5/uvi?appid=4d303226f178538f6031e90433ea1623&lat=" + latitude + "&lon=" + longtitude;
                 $.ajax({
                     url: secondqueryURL,
                     method: "GET"
                 }).then(function (response) {
                     console.log(response);
-                    
+
                     $(".uvindex").text(response.value);
                     $(".uvindex").css("background-color", "crimson");
                     $(".citynamedisplay").text(citynamedisplay + " " + "(" + response.date_iso + ")");
@@ -158,7 +166,7 @@
                 });
 
                 var secondicon;
-                var thirdqueryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityname + "&units=imperial&appid=4d303226f178538f6031e90433ea1623";
+                var thirdqueryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityname + "&units=imperial&appid=4d303226f178538f6031e90433ea1623";
                 $.ajax({
                     url: thirdqueryURL,
                     method: "GET"
@@ -169,7 +177,7 @@
                         var newDiv = $("<div>");
                         newDiv.addClass("col forecast");
                         secondicon = fivedaysweather[i].weather[0].icon;
-                        var secondiconlink = "http://openweathermap.org/img/w/" + secondicon + ".png";
+                        var secondiconlink = "https://openweathermap.org/img/w/" + secondicon + ".png";
                         var date = $("<h3>").text(fivedaysweather[i].dt_txt);
                         var icon = $("<img>").attr('src', secondiconlink);
                         var temp = $("<p>").text("Temperature: " + fivedaysweather[i].main.temp + " °F");
