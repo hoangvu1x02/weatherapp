@@ -7,52 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
     <title>Weather Dashboard</title>
-
-
-    <style>
-        .uvindex {
-            padding: 5px;
-            color: ghostwhite;
-            border-radius: 5px;
-        }
-
-        .forecast {
-            background-color: royalblue;
-            margin-left: 20px;
-            border-radius: 5px;
-            color: whitesmoke;
-        }
-
-        .fiveday {
-            background-color: lightgoldenrodyellow;
-            border-radius: 5px;
-            padding: 20px;
-        }
-
-        .current {
-            border: 1px dotted black;
-            padding: 20px;
-            border-radius: 5px;
-            background-color: lightgoldenrodyellow;
-        }
-
-        body {
-            background-color: khaki;
-        }
-
-        .tablebackground {
-            background-color: lightyellow;
-        }
-
-        .heading {
-            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        }
-
-        .topheader {
-            background-color: lightgoldenrodyellow;
-        }
-    </style>
 </head>
 
 <body>
@@ -66,16 +23,20 @@
         <div class="row">
             <div class="col-4">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="cityname" placeholder="Enter a city name"
-                        aria-label="Recipient's username" aria-describedby="button-addon2">
-                    <div class="input-group-append">
-                        <button class="btn " type="button" id="searchbtn">Search</button>
-                    </div>
+                    <nav class="navbar navbar-light bg-light">
+                        <form class="form-inline">
+                            <input class="form-control mr-sm-2" id="cityname" type="search"
+                                placeholder="Enter a city name" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" id="searchbtn"
+                                type="submit">Search</button>
+                        </form>
+                    </nav>
+
                 </div>
-                <table class="table table-striped tablebackground">
-                    <tbody>
-                    </tbody>
-                </table>
+
+                <div class="list-group location-list">
+
+                </div>
             </div>
             <div class="col-8 rightbackground">
                 <div class="row">
@@ -94,7 +55,6 @@
                 <div class="row fiveday">
                     <h1> 5-Day Forecast: </h1>
                     <div class="row display">
-
                     </div>
                 </div>
             </div>
@@ -103,113 +63,8 @@
     </div>
     </div>
 
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script> -->
-    <script>
-
-        var cityname = "";
-        $("#wicon").css("display", "none");
-
-        $("#searchbtn").on("click", function () {
-            cityname = $("#cityname").val().toLowerCase();
-            $(".display").empty();
-
-            console.log(cityname);
-            createRow();
-
-            var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityname + "&units=imperial&APPID=4d303226f178538f6031e90433ea1623";
-
-            var longtitude;
-            var latitude;
-            var citynamedisplay;
-            var iconcode;
-
-            $.ajax({
-                url: queryURL,
-                method: "GET"
-            }).then(function (response) {
-                console.log(response);
-                citynamedisplay = response.name;
-                iconcode = response.weather[0].icon;
-                $(".temp").text(response.main.temp + " °F");
-                $(".humidity").text(response.main.humidity + " %");
-                $(".wind").text(response.wind.speed + " MPH");
-                longtitude = response.coord.lon;
-                latitude = response.coord.lat;
-                console.log(longtitude);
-                console.log(latitude);
-
-                var iconlink = "https://openweathermap.org/img/w/" + iconcode + ".png";
-                var secondqueryURL = "https://api.openweathermap.org/data/2.5/uvi?appid=4d303226f178538f6031e90433ea1623&lat=" + latitude + "&lon=" + longtitude;
-                $.ajax({
-                    url: secondqueryURL,
-                    method: "GET"
-                }).then(function (response) {
-                    console.log(response);
-
-                    $(".uvindex").text(response.value);
-                    $(".uvindex").css("background-color", "crimson");
-                    $(".citynamedisplay").text(citynamedisplay + " " + "(" + response.date_iso + ")");
-                    $('#wicon').attr('src', iconlink);
-                    $("#wicon").css("display", "block");
-                    console.log(response.date_iso);
-                });
-
-                var secondicon;
-                var thirdqueryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityname + "&units=imperial&appid=4d303226f178538f6031e90433ea1623";
-                $.ajax({
-                    url: thirdqueryURL,
-                    method: "GET"
-                }).then(function (response) {
-                    console.log(response);
-                    var fivedaysweather = response.list;
-                    for (var i = 0; i < fivedaysweather.length; i = i + 8) {
-                        var newDiv = $("<div>");
-                        newDiv.addClass("col forecast");
-                        secondicon = fivedaysweather[i].weather[0].icon;
-                        var secondiconlink = "https://openweathermap.org/img/w/" + secondicon + ".png";
-                        var date = $("<h3>").text(fivedaysweather[i].dt_txt);
-                        var icon = $("<img>").attr('src', secondiconlink);
-                        var temp = $("<p>").text("Temperature: " + fivedaysweather[i].main.temp + " °F");
-                        var humidity = $("<p>").text("Humidity: " + fivedaysweather[i].main.humidity + " %");
-                        console.log(fivedaysweather[i]);
-                        newDiv.append(date, icon, temp, humidity);
-
-                        $(".display").append(newDiv);
-                    };
-                });
-
-            });
-
-
-
-        });
-
-        var createRow = function () {
-            // Create a new table row element
-            var tRow = $("<tr>");
-
-            var cityTd = $("<td>").text(cityname);
-
-            // Append the newly created table data to the table row
-            tRow.append(cityTd);
-            // Append the table row to the table body
-            $("tbody").prepend(tRow);
-        };
-
-
-
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
