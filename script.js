@@ -15,12 +15,15 @@ $(document).ready(function () {
         var button = $("<button>").text(cityname);
         button.addClass("locationname list-group-item list-group-item-action");
         button.attr("type", "button");
+        button.attr("value", cityname);
         $(".location-list").prepend(button);
     };
 
-
-    $(".locationname").on("click", function () {
-        console.log("123");
+    //check result of previous search
+    $(".location-list").on("click", ".locationname", function (event) {
+        cityname = event.target.value;
+        render_weather_result();
+        $(".display").empty();
     });
 
     // display current weather
