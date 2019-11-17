@@ -6,6 +6,7 @@ $(document).ready(function () {
     $("#searchbtn").on("click", function (event) {
         event.preventDefault();
         cityname = $("#cityname").val().toLowerCase();
+        $(".display").empty();
         createRow();
         render_weather_result();
     });
